@@ -44,8 +44,27 @@ function Remove-BattleNetCachedData {
     }
 }
 
+# Function to reinstall Battle.net
+function Reinstall-BattleNet {
+    Write-Host "Downloading the latest Battle.net installer..." -ForegroundColor Cyan
+    $installerUrl = "https://www.blizzard.com/download/confirmation?product=bnetdesk"
+    $downloadPath = "$env:TEMP\BattleNet-Setup.exe"
+
+    try {
+        Invoke-WebRequest -Uri $installerUrl -OutFile $downloadPath -UseBasicParsing
+        Write-Host "Battle.net installer downloaded to $downloadPath." -ForegroundColor Green
+        
+        Write-Host "Running the Battle.net installer..." -ForegroundColor Cyan
+        Start-Process -FilePath $downloadPath -ArgumentList "/S" -Wait
+        Write-Host "Battle.net has been reinstalled." -ForegroundColor Green
+    } catch {
+        Write-Error "Failed to download or run the installer: $_"
+    }
+}
+
 # Main execution
 Uninstall-BattleNet
 Remove-BattleNetCachedData
+Reinstall-BattleNet
 
-Write-Host "Battle.net and its cached data have been removed." -ForegroundColor Green
+Write-Host "Battle.net has been reinstalled and its cached data has been cleaned." -ForegroundColor Green
